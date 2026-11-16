@@ -68,16 +68,47 @@ echo "Total Memory: $TOTAL_MEMORY bytes"
 echo "Used Memory: $USED_MEMORY bytes"
 echo "Memory Usage: ${MEMORY_USAGE}%"
 
+
 # Check memory usage against thresholds
 if (( MEMORY_USAGE >= CRITICAL )); then
+
     echo "CRITICAL: Memory usage is high!"
+
+    # Generate email subject with timestamp
+    SUBJECT="$(date '+%Y%m%d %H:%M') memory_check - critical"
+
+    # Generate and send email notification
+    {
+        echo "CRITICAL: Memory usage has reached the critical threshold."
+        echo ""
+        echo "Memory Usage: ${MEMORY_USAGE}%"
+        echo "Critical Threshold: ${CRITICAL}%"
+        echo "Warning Threshold: ${WARNING}%"
+        echo ""
+        echo "Current Memory Information:"
+        free -h
+        echo ""
+        echo "Top 10 Memory-Consuming Processes:"
+        ps -eo pid,comm,%mem --sort=-%mem | head -n 11
+    } | mail -s "$SUBJECT" "$EMAIL"
+
+    # Check email command result
+    if [[ $? -eq 0 ]]; then
+        echo "Critical alert email sent successfully."
+    else
+        echo "ERROR: Failed to send critical alert email."
+    fi
+
     exit 2
 
 elif (( MEMORY_USAGE >= WARNING )); then
+
     echo "WARNING: Memory usage is elevated!"
     exit 1
 
 else
+
     echo "OK: Memory usage is normal."
     exit 0
+
 fi

@@ -134,3 +134,31 @@ echo $?
 ```
 
 Expected exit code: `0` (Successful command execution).
+
+
+
+
+### Critical Memory Email Notification
+
+When memory usage reaches or exceeds the configured critical threshold, the script automatically sends an email notification containing:
+
+- Current memory usage and configured thresholds.
+- Current memory information.
+- Top 10 memory-consuming processes, including their PIDs.
+
+The email subject follows this format:
+
+`YYYYMMDD HH:MM memory_check - critical`
+
+Email notifications are only sent when memory usage reaches the critical threshold.
+
+**Example:**
+
+```bash
+./memory_check.sh -c 20 -w 10 -e your_email@gmail.com
+```
+
+**Expected behavior:**
+- Exit code `2`: Critical memory usage; email notification sent.
+- Exit code `1`: Warning memory usage; no email notification.
+- Exit code `0`: Normal memory usage; no email notification.
