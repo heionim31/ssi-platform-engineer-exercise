@@ -162,3 +162,63 @@ Email notifications are only sent when memory usage reaches the critical thresho
 - Exit code `2`: Critical memory usage; email notification sent.
 - Exit code `1`: Warning memory usage; no email notification.
 - Exit code `0`: Normal memory usage; no email notification.
+
+
+
+
+
+## CPU Check (`cpu_check.sh`)
+
+The CPU monitoring script measures CPU utilization by comparing CPU statistics from `/proc/stat` over a one-second interval.
+
+### Features
+
+- Calculates CPU utilization percentage.
+- Accepts critical and warning thresholds through command-line options.
+- Validates required parameters and threshold values.
+- Returns the appropriate exit status:
+  - `0` – Normal CPU usage.
+  - `1` – Warning threshold reached.
+  - `2` – Critical threshold reached.
+  - `3` – Invalid parameters or calculation error.
+- Sends an email notification when CPU usage reaches the critical threshold.
+- Includes the top 10 CPU-consuming processes, their PIDs, and CPU utilization in the email report.
+
+### Usage
+
+```bash
+./cpu_check.sh -c <critical_threshold> -w <warning_threshold> -e <email_address>
+```
+
+Example:
+
+```bash
+./cpu_check.sh -c 90 -w 80 -e your_email@gmail.com
+```
+
+### Critical Email Notification
+
+When CPU usage reaches or exceeds the critical threshold, the script sends an email containing:
+
+- Current CPU usage and configured thresholds.
+- Top 10 CPU-consuming processes.
+- Process IDs (PIDs), process names, and CPU utilization.
+
+The email subject follows this format:
+
+`YYYYMMDD HH:MM cpu_check - critical`
+
+### Testing
+
+Example commands for testing different threshold conditions:
+
+```bash
+# Normal
+./cpu_check.sh -c 90 -w 80 -e your_email@gmail.com
+
+# Warning
+./cpu_check.sh -c 90 -w 0 -e your_email@gmail.com
+
+# Critical (requires CPU usage of at least 1%)
+./cpu_check.sh -c 1 -w 0 -e your_email@gmail.com
+```
