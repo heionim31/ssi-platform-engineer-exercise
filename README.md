@@ -136,8 +136,6 @@ echo $?
 Expected exit code: `0` (Successful command execution).
 
 
-
-
 ### Critical Memory Email Notification
 
 When memory usage reaches or exceeds the configured critical threshold, the script automatically sends an email notification containing:
@@ -165,9 +163,7 @@ Email notifications are only sent when memory usage reaches the critical thresho
 
 
 
-
-
-## CPU Check (`cpu_check.sh`)
+## CPU CHECK (`cpu_check.sh`)
 
 The CPU monitoring script measures CPU utilization by comparing CPU statistics from `/proc/stat` over a one-second interval.
 
@@ -221,4 +217,58 @@ Example commands for testing different threshold conditions:
 
 # Critical (requires CPU usage of at least 1%)
 ./cpu_check.sh -c 1 -w 0 -e your_email@gmail.com
+```
+
+
+
+## DISK PARTITION CHECK (`disk_check.sh`)
+
+The disk monitoring script uses the `df` command to retrieve filesystem and disk partition utilization.
+
+### Features
+
+- Monitors disk partition usage individually.
+- Excludes temporary filesystems such as `tmpfs` and `devtmpfs`.
+- Accepts critical and warning thresholds through command-line options.
+- Identifies partitions that reach warning or critical thresholds.
+- Determines the overall status based on the highest severity found.
+- Returns the appropriate exit status:
+  - `0` – Normal disk usage.
+  - `1` – Warning threshold reached.
+  - `2` – Critical threshold reached.
+  - `3` – Invalid parameters.
+- Sends an email notification when at least one partition reaches the critical threshold.
+- Includes filesystem, total space, used space, available space, usage percentage, and mount point in the email report.
+
+### Usage
+
+```bash
+./disk_check.sh -c <critical_threshold> -w <warning_threshold> -e <email_address>
+```
+
+Example:
+
+```bash
+./disk_check.sh -c 90 -w 80 -e your_email@gmail.com
+```
+
+### Critical Email Notification
+
+When at least one monitored partition reaches or exceeds the critical threshold, the script sends an email containing the current disk partition information.
+
+The email subject follows this format:
+
+`YYYYMMDD HH:MM disk_check - critical`
+
+### Testing
+
+```bash
+# Normal
+./disk_check.sh -c 90 -w 80 -e your_email@gmail.com
+
+# Warning
+./disk_check.sh -c 90 -w 10 -e your_email@gmail.com
+
+# Critical
+./disk_check.sh -c 12 -w 10 -e your_email@gmail.com
 ```
