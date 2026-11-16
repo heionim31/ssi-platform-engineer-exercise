@@ -23,8 +23,6 @@ SSI Platform Engineer technical exercise.
 
 
 
-
-
 ## Memory Monitoring Script
 
 The `memory_check.sh` script monitors system memory usage and compares it against user-defined warning and critical thresholds.
@@ -80,3 +78,59 @@ Expected exit code: `2` (Critical)
 | `1` | Memory usage reached or exceeded the warning threshold |
 | `2` | Memory usage reached or exceeded the critical threshold |
 | `3` | Invalid or missing parameters |
+
+
+
+## Email Notification Setup
+
+The memory monitoring script supports email notifications when memory usage reaches the critical threshold.
+
+### Requirements
+
+- s-nail mail utility
+- Gmail account with 2-Step Verification enabled
+- Gmail App Password
+- SMTP connection to smtp.gmail.com
+
+### SMTP Configuration
+
+Configure s-nail using a local `~/.mailrc` file:
+
+```text
+set v15-compat
+set mta=smtps://smtp.gmail.com:465
+set smtp-auth=login
+set netrc-lookup
+set from=YOUR_GMAIL_ADDRESS
+```
+
+Store SMTP credentials separately in `~/.netrc`:
+
+```text
+machine smtp.gmail.com login YOUR_GMAIL_ADDRESS password YOUR_APP_PASSWORD
+```
+
+Secure the configuration files:
+
+```bash
+chmod 600 ~/.mailrc
+chmod 600 ~/.netrc
+```
+
+**Security Note:** Never commit SMTP credentials, Gmail App Passwords, or personal email configuration files to GitHub.
+
+### Test Email Delivery
+
+Run the following command, replacing the recipient with your email address:
+
+```bash
+echo "This is a test email from my CentOS memory monitoring project." | mail -v -s "CentOS SMTP Test" YOUR_GMAIL_ADDRESS
+```
+
+Check the command's exit status:
+
+```bash
+echo $?
+```
+
+Expected exit code: `0` (Successful command execution).
